@@ -7,7 +7,67 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <h1>Focused Learning Timer ️‍🔥</h1>
+  <body class="h-full grid place-items-center">
+    <div id="app">
+      <header class="text-center py-10 mt-10">
+        <h1 class="text-xl">Focused Learning Timer ️‍ ⏰</h1>
+        <p class="text-gray-500">{{greet}}</p>
+      </header>
+      <main class="flex flex-col gap-4 items-center">
+        <form @submit.prevent="addTimer" class="flex flex-col gap-2">
+          <label for="session_name" class="italic text-sm">
+            Session Name
+          </label>
+          <div class="flex gap-2">
+            <input
+              type="text"
+              id="session_name"
+              class="border rounded border-blue-400 p-2"
+              v-model="newSessionName"
+              placeholder="Enter session name"
+            />
+            <button class="bg-blue-300 py-2 px-4 rounded">Create</button>
+          </div>
+        </form>
+
+        <section
+          :class="timers.length > 2 ? 'grid grid-cols-3 gap-4' : timers.length === 2 ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-1 gap-4'"
+        >
+          <div
+            v-for="(timer, index) in timers"
+            :key="index"
+            class="p-4 bg-blue-200 rounded w-40 h-40 flex flex-col text-center"
+          >
+            <h2>{{timer.title}}</h2>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script>
+      let app = {
+        data() {
+          return {
+            greet: "Hello there, Let's fire up a focused learning session 🔥",
+            newSessionName: "",
+            timers: [
+              { id: 1, title: "Timer 1" },
+              { id: 2, title: "Timer 2" }
+            ]
+          };
+        },
+        methods: {
+          addTimer() {
+            const newTimer = {
+              id: Date.now(),
+              title: this.newSessionName
+            };
+            this.timers.push(newTimer);
+            this.newSessionName = "";
+            console.log(this.timers);
+          }
+        }
+      };
+      Vue.createApp(app).mount("#app");
+    </script>
   </body>
 </html>
