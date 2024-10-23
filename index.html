@@ -6,6 +6,7 @@
     <title>Focused Learning Timer</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuid.min.js"></script>
   </head>
   <body class="h-full grid place-items-center">
     <div id="app">
@@ -43,6 +44,7 @@
         </section>
       </main>
     </div>
+
     <script>
       let app = {
         data() {
@@ -50,15 +52,15 @@
             greet: "Hello there, Let's fire up a focused learning session 🔥",
             newSessionName: "",
             timers: [
-              { id: 1, title: "Timer 1" },
-              { id: 2, title: "Timer 2" }
+              { id: uuid.v4(), title: "Timer 1" },
+              { id: uuid.v4(), title: "Timer 2" }
             ]
           };
         },
         methods: {
           addTimer() {
             const newTimer = {
-              id: Date.now(),
+              id: uuid.v4(), 
               title: this.newSessionName
             };
             this.timers.push(newTimer);
