@@ -31,12 +31,10 @@
           </div>
         </form>
 
-        <section
-          :class="timers.length > 2 ? 'grid grid-cols-3 gap-4' : timers.length === 2 ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-1 gap-4'"
-        >
+        <section :class="gridClass">
           <div
-            v-for="(timer, index) in timers"
-            :key="index"
+            v-for="timer in timers"
+            :key="timer.id"
             class="p-4 bg-blue-200 rounded w-40 h-40 flex flex-col text-center"
           >
             <h2>{{timer.title}}</h2>
@@ -57,15 +55,23 @@
             ]
           };
         },
+        computed: {
+          gridClass() {
+            return this.timers.length > 2
+              ? "grid grid-cols-3 gap-4"
+              : this.timers.length === 2
+              ? "grid grid-cols-2 gap-4"
+              : "grid grid-cols-1 gap-4";
+          }
+        },
         methods: {
           addTimer() {
             const newTimer = {
-              id: uuid.v4(), 
+              id: uuid.v4(),
               title: this.newSessionName
             };
             this.timers.push(newTimer);
             this.newSessionName = "";
-            console.log(this.timers);
           }
         }
       };
