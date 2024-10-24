@@ -1,12 +1,14 @@
+import Timer from "./Timer.js";
+
 export default {
+  components: {
+    timer: Timer
+  },
   data() {
     return {
       greet: "Hello there, Let's fire up a focused learning session 🔥",
       newSessionName: "",
-      timers: [
-        { id: uuid.v4(), title: "Timer 1" },
-        { id: uuid.v4(), title: "Timer 2" }
-      ]
+      timers: []
     };
   },
   computed: {
@@ -20,12 +22,37 @@ export default {
   },
   methods: {
     addTimer() {
-      const newTimer = {
+      const newTimer = Vue.reactive({
         id: uuid.v4(),
-        title: this.newSessionName
-      };
+        title: this.newSessionName,
+        seconds: 0,
+        running: true,
+        intervalId: null
+      });
+
+      newTimer.intervalId = setInterval(() => {
+        newTimer.seconds++;
+      }, 1000);
+
       this.timers.push(newTimer);
       this.newSessionName = "";
+    },
+    pauseTimer(timer) {
+      clearInterval(timer.intervalId);
+      timer.running = false;
+    },
+    resetTimer(timer) {
+      clearInterval(timer.intervalId);
+      timer.seconds = 0;
+      timer.running = false;
+    },
+    startTimer(timer) {
+      if (!timer.running) {
+        timer.running = true;
+        timer.intervalId = setInterval(() => {
+          timer.seconds++;
+        }, 1000);
+      }
     }
   }
 };
