@@ -32,12 +32,16 @@
         </form>
 
         <section :class="gridClass">
-          <div
-            v-for="timer in timers"
-            :key="timer.id"
-            class="p-4 bg-blue-200 rounded w-40 h-40 flex flex-col text-center"
-          >
-            <h2>{{timer.title}}</h2>
+          <div v-for="timer in timers" :key="timer.id">
+            <timer
+              :title="timer.title"
+              :seconds="timer.seconds"
+              :running="timer.running"
+              @start="startTimer(timer)"
+              @pause="pauseTimer(timer)"
+              @reset="resetTimer(timer)"
+            >
+            </timer>
           </div>
         </section>
       </main>
