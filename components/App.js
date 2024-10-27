@@ -21,6 +21,7 @@ export default {
             class="border rounded border-blue-400 p-2"
             v-model="newSessionName"
             placeholder="Enter session name"
+            ref="sessionInput"
           />
           <button class="bg-blue-300 py-2 px-4 rounded">Create</button>
         </div>
@@ -99,5 +100,8 @@ export default {
   },
   beforeMount() {
     this.loadTimers();
+  },
+  mounted() {
+    this.$refs.sessionInput.focus();
   }
 };
