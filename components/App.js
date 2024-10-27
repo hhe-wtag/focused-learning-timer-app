@@ -1,4 +1,8 @@
 import Timer from "./Timer.js";
+import {
+  saveTimersToLocalStorage,
+  loadTimersFromLocalStorage
+} from "../utils/localStorage.js";
 
 export default {
   template: `
@@ -67,15 +71,22 @@ export default {
 
       this.timers.push(newTimer);
       this.newSessionName = "";
+      saveTimersToLocalStorage(this.timers);
+    },
+    loadTimers() {
+      const timers = loadTimersFromLocalStorage();
+      this.timers = timers.map((timer) => Vue.reactive(timer));
     },
     handlePauseTimer(timer) {
       clearInterval(timer.intervalId);
       timer.running = false;
+      saveTimersToLocalStorage(this.timers);
     },
     handleResetTimer(timer) {
       clearInterval(timer.intervalId);
       timer.seconds = 0;
       timer.running = false;
+      saveTimersToLocalStorage(this.timers);
     },
     handleStartTimer(timer) {
       if (!timer.running) {
@@ -85,5 +96,8 @@ export default {
         }, 1000);
       }
     }
+  },
+  beforeMount() {
+    this.loadTimers();
   }
 };
