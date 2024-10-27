@@ -30,12 +30,15 @@ export default {
       <section :class="gridClass">
         <div v-for="timer in timers" :key="timer.id">
           <Timer
+            :id="timer.id"
+            :intervalId="timer.intervalId"
             :title="timer.title"
             :seconds="timer.seconds"
             :running="timer.running"
             @startTimer="handleStartTimer(timer)"
             @pauseTimer="handlePauseTimer(timer)"
             @resetTimer="handleResetTimer(timer)"
+            @deleteTimer="handleDeleteTimer(timer.id)"
           />
         </div>
       </section>
@@ -62,15 +65,14 @@ export default {
   },
   methods: {
     handleAddTimer() {
-      const newTimer = Vue.reactive({
+      const newTimer = {
         id: uuid.v4(),
         title: this.newSessionName,
         seconds: 0,
         running: false,
         intervalId: null
-      });
-
-      this.timers.push(newTimer);
+      };
+      this.timers.push(Vue.reactive(newTimer));
       this.newSessionName = "";
       saveTimersToLocalStorage(this.timers);
     },
@@ -96,6 +98,10 @@ export default {
           timer.seconds++;
         }, 1000);
       }
+    },
+    handleDeleteTimer(timerId) {
+      this.timers = this.timers.filter((t) => t.id !== timerId);
+      saveTimersToLocalStorage(this.timers);
     }
   },
   beforeMount() {
