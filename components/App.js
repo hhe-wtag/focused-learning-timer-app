@@ -1,4 +1,8 @@
 import Timer from "./Timer.js";
+import {
+  saveTimersToLocalStorage,
+  loadTimersFromLocalStorage
+} from "../utils/localStorage.js";
 
 export default {
   template: `
@@ -17,6 +21,7 @@ export default {
             class="border rounded border-blue-400 p-2"
             v-model="newSessionName"
             placeholder="Enter session name"
+            ref="sessionInput"
           />
           <button class="bg-blue-300 py-2 px-4 rounded">Create</button>
         </div>
@@ -25,12 +30,15 @@ export default {
       <section :class="gridClass">
         <div v-for="timer in timers" :key="timer.id">
           <Timer
+            :id="timer.id"
+            :intervalId="timer.intervalId"
             :title="timer.title"
             :seconds="timer.seconds"
             :running="timer.running"
             @startTimer="handleStartTimer(timer)"
             @pauseTimer="handlePauseTimer(timer)"
             @resetTimer="handleResetTimer(timer)"
+            @deleteTimer="handleDeleteTimer(timer.id)"
           />
         </div>
       </section>
@@ -57,25 +65,31 @@ export default {
   },
   methods: {
     handleAddTimer() {
-      const newTimer = Vue.reactive({
+      const newTimer = {
         id: uuid.v4(),
         title: this.newSessionName,
         seconds: 0,
         running: false,
         intervalId: null
-      });
-
-      this.timers.push(newTimer);
+      };
+      this.timers.push(Vue.reactive(newTimer));
       this.newSessionName = "";
+      saveTimersToLocalStorage(this.timers);
+    },
+    loadTimers() {
+      const timers = loadTimersFromLocalStorage();
+      this.timers = timers.map((timer) => Vue.reactive(timer));
     },
     handlePauseTimer(timer) {
       clearInterval(timer.intervalId);
       timer.running = false;
+      saveTimersToLocalStorage(this.timers);
     },
     handleResetTimer(timer) {
       clearInterval(timer.intervalId);
       timer.seconds = 0;
       timer.running = false;
+      saveTimersToLocalStorage(this.timers);
     },
     handleStartTimer(timer) {
       if (!timer.running) {
@@ -84,6 +98,16 @@ export default {
           timer.seconds++;
         }, 1000);
       }
+    },
+    handleDeleteTimer(timerId) {
+      this.timers = this.timers.filter((t) => t.id !== timerId);
+      saveTimersToLocalStorage(this.timers);
     }
+  },
+  beforeMount() {
+    this.loadTimers();
+  },
+  mounted() {
+    this.$refs.sessionInput.focus();
   }
 };
